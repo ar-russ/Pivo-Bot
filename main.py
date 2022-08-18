@@ -1,7 +1,13 @@
-from PIL import Image
 import requests
+import configparser
+from PIL import Image
 from bs4 import BeautifulSoup
 from colormap import rgb2hex
+
+config = configparser.ConfigParser()
+config.read("config.ini")
+
+source_img_format = config.get("base", "source_img_format")
 
 
 def generate_and_save_colored_image(user_id: int) -> Image:
@@ -13,7 +19,7 @@ def generate_and_save_colored_image(user_id: int) -> Image:
             image (PIL.Image) : Картинка, которую нужно покрасить
             user_id (int) : ID пользователя, которое конвертируется в цветовой код (RGB)
     '''
-    source_image = Image.open("source.png")
+    source_image = Image.open("source." + source_img_format).convert("RGBA")
     color_rgb = convert_num_to_color(user_id)
     color_image = Image.new("RGBA", source_image.size, color_rgb)
     result = Image.blend(source_image, color_image, 0.5)
